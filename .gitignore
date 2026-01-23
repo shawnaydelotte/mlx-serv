@@ -1,0 +1,42 @@
+# Python virtual environment
+mlx-env/
+venv/
+*.pyc
+__pycache__/
+
+# Model files (large, should be downloaded via setup)
+qwen-coder-7b-4bit/
+qwen-coder-3b-4bit/
+*.safetensors
+*.bin
+*.gguf
+
+# Logs
+*.log
+mlx_server.log
+litellm_proxy.log
+
+# Process tracking
+.server_pids
+*.pid
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Environment files
+.env
+.env.local

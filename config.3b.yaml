@@ -1,0 +1,87 @@
+model_list:
+  - model_name: claude-coder-fast
+    litellm_params:
+      model: openai/mlx-community/Qwen2.5-Coder-3B-Instruct-4bit
+      api_base: http://localhost:8080/v1
+      api_key: dummy-key-local
+      # Optimized for speed with 3B model
+      max_tokens: 8192
+      temperature: 0.3
+      top_p: 0.95
+      frequency_penalty: 0.05
+      presence_penalty: 0.05
+      timeout: 180
+      stream: true
+    model_provider: openai
+    model_info:
+      mode: chat
+      supports_function_calling: false
+      supports_vision: false
+      supports_streaming: true
+
+  # Aliases pointing to 3B model
+  - model_name: claude-haiku-4-5
+    litellm_params:
+      model: openai/mlx-community/Qwen2.5-Coder-3B-Instruct-4bit
+      api_base: http://localhost:8080/v1
+      api_key: dummy-key-local
+      max_tokens: 8192
+      temperature: 0.3
+      top_p: 0.95
+      frequency_penalty: 0.05
+      presence_penalty: 0.05
+      timeout: 180
+      stream: true
+
+  - model_name: claude-3-5-sonnet-20241022
+    litellm_params:
+      model: openai/mlx-community/Qwen2.5-Coder-3B-Instruct-4bit
+      api_base: http://localhost:8080/v1
+      api_key: dummy-key-local
+      max_tokens: 8192
+      temperature: 0.3
+      top_p: 0.95
+      frequency_penalty: 0.05
+      presence_penalty: 0.05
+      timeout: 180
+      stream: true
+
+  - model_name: claude-3-5-haiku-20241022
+    litellm_params:
+      model: openai/mlx-community/Qwen2.5-Coder-3B-Instruct-4bit
+      api_base: http://localhost:8080/v1
+      api_key: dummy-key-local
+      max_tokens: 8192
+      temperature: 0.3
+      top_p: 0.95
+      frequency_penalty: 0.05
+      presence_penalty: 0.05
+      timeout: 180
+      stream: true
+
+# General settings
+general_settings:
+  master_key: none
+  set_verbose: false
+  json_logs: true
+  num_workers: 1
+  request_timeout: 180
+  allowed_origins:
+    - http://localhost:*
+    - http://127.0.0.1:*
+
+# Router settings
+router_settings:
+  routing_strategy: simple-shuffle
+  model_group_alias:
+    claude-coder: claude-coder-fast
+    qwen-coder: claude-coder-fast
+
+# Litellm settings
+litellm_settings:
+  telemetry: false
+  drop_params: true
+  num_retries: 2
+  retry_after: 5
+  success_callback: []
+  failure_callback: []
