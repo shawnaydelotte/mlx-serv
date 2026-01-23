@@ -445,7 +445,9 @@ main() {
                 print_header
                 stop_servers
                 sleep 2
-                # Fall through to start servers
+                shift
+                # Continue processing remaining arguments
+                continue
                 ;;
             --configure-opencode)
                 if [ -f "./configure-opencode.sh" ]; then
@@ -490,6 +492,13 @@ main() {
                 ;;
         esac
     done
+
+    # Set model directory based on selected mode
+    if [ "$FAST_MODE" = true ]; then
+        MODEL_DIR="./qwen-coder-3b-4bit"
+    else
+        MODEL_DIR="./qwen-coder-7b-4bit"
+    fi
 
     # Start servers
     print_header
