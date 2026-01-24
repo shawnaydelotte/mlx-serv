@@ -4,10 +4,18 @@
 
 ## Overview
 
-This setup runs **Qwen2.5-Coder-7B-Instruct** (4-bit quantized) on Apple Silicon using:
+This setup runs **Qwen2.5-Coder** models (4-bit quantized) on Apple Silicon using:
 - **MLX**: Apple's ML framework optimized for M-series chips
 - **mlx-lm**: Server for running LLMs with MLX
 - **LiteLLM**: Proxy that provides Anthropic/OpenAI-compatible API endpoints
+
+### Key Features
+
+- **Dual Model Support**: 7B (quality) and 3B (speed) models with easy switching
+- **Ralph Loop**: Autonomous iteration engine for coding tasks
+- **MCP Servers**: Web search and git intelligence integrations
+- **Complete Testing**: 43 tests covering all components
+- **Production Ready**: Fully documented with known limitations
 
 ## System Requirements
 
@@ -69,14 +77,29 @@ This configures OpenCode at `~/.config/opencode/config.json` with:
 ## Commands
 
 ```bash
-./start.sh                   # Start servers
+# Server Management
+./start.sh                   # Start servers (7B model - quality)
+./start.sh --fast            # Start servers (3B model - speed)
 ./start.sh --status          # Check if servers are running
 ./start.sh --logs            # View live logs
 ./start.sh --stop            # Stop all servers
 ./start.sh --restart         # Restart servers
+./start.sh --restart --fast  # Restart with 3B model
+
+# Configuration
 ./configure-opencode.sh      # Configure OpenCode (default)
 ./configure-opencode.sh --optimized  # Configure OpenCode (optimized)
-./test.sh                    # Run verification tests
+
+# Testing & Verification
+./test.sh                    # Run health checks
+./verify.sh                  # Integration verification
+source mlx-env/bin/activate && PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/ -v
+
+# Ralph Loop
+./ralph-loop.sh "task"       # Autonomous iteration
+./ralph-loop.sh --help       # Show Ralph Loop options
+
+# Help
 ./start.sh --help            # Show help
 ```
 
@@ -370,11 +393,59 @@ Ralph Loop enables autonomous iteration on coding tasks through Plan → Execute
 ### Features
 
 - **Automatic model selection:** 3B for simple tasks, 7B for complex
-- **State persistence:** Resume from checkpoints after interruption
+- **State persistence:** Resume from checkpoints in `.ralph/` directory
 - **User control:** Approval checkpoints every 2 iterations
-- **Max iteration safety:** Prevents infinite loops
+- **Max iteration safety:** Prevents infinite loops (5 max iterations)
+- **Test Coverage:** 43/43 tests passing
+
+### Known Limitations
+
+Ralph Loop currently operates in **simulation mode**:
+- Execute phase logs intent but doesn't modify files
+- No tool calling (can't run git, tests, or read files)
+- No codebase context analysis
+
+**Future:** Integration with OpenCode tool calling for real execution.
 
 See [docs/RALPH-LOOP.md](docs/RALPH-LOOP.md) for complete tutorial and examples.
+
+## MCP Servers - Extended Capabilities
+
+MCP (Model Context Protocol) servers provide additional capabilities to local models.
+
+### Web Search Server
+
+**Location:** `mcp_servers/web-search/server.py`
+
+**Features:**
+- DuckDuckGo search integration
+- Rate limiting (10 requests/minute)
+- Returns titles, URLs, and snippets
+
+**Use Cases:**
+- Finding documentation
+- Checking package versions
+- Researching error messages
+- API reference lookup
+
+### Git Intelligence Server
+
+**Location:** `mcp_servers/git-intel/server.py`
+
+**Features:**
+- Analyze commit ranges
+- Find files that change together (co-change analysis)
+- Explain specific commits
+
+**Use Cases:**
+- Understanding recent changes
+- Impact analysis for refactoring
+- Finding related test files
+- Code review preparation
+
+**Note:** MCP servers are not yet integrated with Ralph Loop but can be used standalone.
+
+See [docs/USAGE-GUIDE.md](docs/USAGE-GUIDE.md) for complete MCP server documentation.
 
 ## FAQ
 

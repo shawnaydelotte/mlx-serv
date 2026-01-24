@@ -126,6 +126,124 @@ MCP (Model Context Protocol) servers extend the local model with additional capa
 
 **Logs:** `~/.ralph/mcp-git-intel.log`
 
+## Ralph Loop
+
+Ralph Loop provides autonomous iteration on coding tasks through Plan → Execute → Review → Refine cycles.
+
+### Quick Start
+
+```bash
+# Basic usage (auto-selects model)
+./ralph-loop.sh "Fix authentication bug in login.py"
+
+# Force 3B model (speed)
+./ralph-loop.sh --model 3b "Add unit tests for API endpoints"
+
+# Force 7B model (quality)
+./ralph-loop.sh --model 7b "Refactor database queries for performance"
+
+# Resume from checkpoint
+./ralph-loop.sh --resume
+
+# Help
+./ralph-loop.sh --help
+```
+
+### When to Use Ralph Loop
+
+**Good For:**
+- Bug fixes with clear scope
+- Test generation
+- Refactoring tasks
+- Documentation updates
+- Simple feature additions
+
+**Not Good For (Yet):**
+- Complex multi-file changes
+- Tasks requiring tool execution
+- Tasks needing codebase understanding
+
+### Model Selection
+
+Ralph Loop automatically selects the best model based on task complexity:
+
+**3B Model (Speed):**
+- Simple tasks (< 50 tokens in description)
+- Test generation
+- Documentation
+- Quick iterations
+- ~300-400 tok/s performance
+
+**7B Model (Quality):**
+- Complex tasks (50+ tokens)
+- Architectural decisions
+- Bug debugging
+- Code optimization
+- ~170 tok/s performance
+
+**Override:** Use `--model 3b` or `--model 7b` to force a specific model.
+
+### State Management
+
+Ralph Loop saves state to `.ralph/` directory:
+
+**Files:**
+- `state.json` - Current iteration state
+- `plan.json` - Generated implementation plan
+- `execution.json` - Execution results
+- `review.json` - Review outcomes
+
+**Resume:** If interrupted, run `./ralph-loop.sh --resume` to continue from last checkpoint.
+
+**Clean Start:** Delete `.ralph/` directory to start fresh.
+
+### Iteration Flow
+
+1. **Plan Phase:** Analyzes task and generates implementation steps
+2. **Execute Phase:** Simulates execution (logs intent, doesn't modify files)
+3. **Review Phase:** Validates results against success criteria
+4. **Refine Phase:** If not complete, refines plan and iterates
+
+**Max Iterations:** 5 (prevents infinite loops)
+**User Approval:** Every 2 iterations
+
+### Known Limitations
+
+Ralph Loop currently operates in **simulation mode**:
+- Execute phase logs intent but doesn't modify files
+- No tool calling (can't run git, tests, or read files)
+- No codebase context analysis
+
+**Future:** Integration with OpenCode tool calling for real execution.
+
+### Example Session
+
+```bash
+$ ./ralph-loop.sh "Add error handling to database connection"
+
+Ralph Loop v1.0
+Task: Add error handling to database connection
+Model: Auto-selecting... 7B (quality mode)
+
+=== Iteration 1/5 ===
+[Plan] Analyzing task...
+[Plan] Generated 3 implementation steps
+[Execute] Simulating file modifications...
+[Review] Checking success criteria...
+[Review] Not complete - missing retry logic
+
+=== Iteration 2/5 ===
+[Plan] Refining based on review...
+[Plan] Updated plan with retry mechanism
+[Execute] Simulating changes...
+[Review] Success criteria met!
+
+Task completed in 2 iterations (3.2 minutes)
+State saved to .ralph/
+```
+
+See [docs/RALPH-LOOP.md](docs/RALPH-LOOP.md) for complete tutorial with examples.
+
 ## Running MCP Servers
 
 MCP servers run as separate processes and communicate via stdio or Unix sockets.
