@@ -5,3 +5,7 @@ aiofiles>=23.2.1
 
 # Web Search Server
 duckduckgo-search>=5.0.0
+
+# Git Intelligence Server
+GitPython>=3.1.40
+networkx>=3.2
