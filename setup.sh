@@ -32,7 +32,7 @@ pip install mlx-lm litellm
 
 # Step 3.5: Install MCP server dependencies
 echo "→ Installing MCP server dependencies..."
-pip install -r mcp-servers/requirements.txt
+pip install -r mcp_servers/requirements.txt
 
 # Step 4: Download and quantize model (Qwen2.5-Coder-7B to 4-bit) in current directory
 echo "→ Downloading and quantizing Qwen2.5-Coder-7B model..."

@@ -1,7 +1,5 @@
-# mcp-servers/base_server.py
 """Base MCP server with common functionality."""
 
-import asyncio
 import logging
 import signal
 import sys
@@ -57,25 +55,3 @@ class BaseMCPServer:
                 write_stream,
                 self.server.create_initialization_options()
             )
-
-    def register_tool(self, func, name: str, description: str, parameters: dict):
-        """Register a tool with the MCP server."""
-        @self.server.call_tool()
-        async def tool_handler(name: str, arguments: dict):
-            if name == func.__name__:
-                try:
-                    result = await func(**arguments)
-                    return result
-                except Exception as e:
-                    self.logger.error(f"Error in {name}: {e}")
-                    raise
-
-        self.server.list_tools.append({
-            "name": name,
-            "description": description,
-            "inputSchema": {
-                "type": "object",
-                "properties": parameters,
-                "required": list(parameters.keys())
-            }
-        })
