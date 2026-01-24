@@ -1,0 +1,104 @@
+model_list:
+  - model_name: claude-coder-fake
+    litellm_params:
+      model: openai/mlx-community/Qwen2.5-Coder-7B-Instruct-4bit
+      api_base: http://localhost:8080/v1
+      api_key: dummy-key-local
+      # Optimized for code generation
+      max_tokens: 8192  # Increased for longer code outputs
+      temperature: 0.3  # Lower for more focused/deterministic code
+      top_p: 0.9
+      frequency_penalty: 0.1  # Reduce repetition
+      presence_penalty: 0.1
+      # Timeout settings for local inference
+      timeout: 300  # 5 minutes for complex completions
+      stream: true  # Enable streaming for better UX
+    model_provider: openai
+    model_info:
+      mode: chat
+      supports_function_calling: false
+      supports_vision: false
+      supports_streaming: true
+
+  # Aliases for common Claude model names - all route to local model
+  - model_name: claude-haiku-4-5
+    litellm_params:
+      model: openai/mlx-community/Qwen2.5-Coder-7B-Instruct-4bit
+      api_base: http://localhost:8080/v1
+      api_key: dummy-key-local
+      max_tokens: 8192
+      temperature: 0.3
+      top_p: 0.9
+      frequency_penalty: 0.1
+      presence_penalty: 0.1
+      timeout: 300
+      stream: true
+
+  - model_name: claude-3-5-sonnet-20241022
+    litellm_params:
+      model: openai/mlx-community/Qwen2.5-Coder-7B-Instruct-4bit
+      api_base: http://localhost:8080/v1
+      api_key: dummy-key-local
+      max_tokens: 8192
+      temperature: 0.3
+      top_p: 0.9
+      frequency_penalty: 0.1
+      presence_penalty: 0.1
+      timeout: 300
+      stream: true
+
+  - model_name: claude-3-5-haiku-20241022
+    litellm_params:
+      model: openai/mlx-community/Qwen2.5-Coder-7B-Instruct-4bit
+      api_base: http://localhost:8080/v1
+      api_key: dummy-key-local
+      max_tokens: 8192
+      temperature: 0.3
+      top_p: 0.9
+      frequency_penalty: 0.1
+      presence_penalty: 0.1
+      timeout: 300
+      stream: true
+
+# General settings
+general_settings:
+  # Disable authentication for local use
+  master_key: none
+
+  # Logging
+  set_verbose: false
+  json_logs: true
+
+  # Performance
+  num_workers: 1  # Single worker for local model
+
+  # Timeouts
+  request_timeout: 300
+
+  # CORS for local development
+  allowed_origins:
+    - http://localhost:*
+    - http://127.0.0.1:*
+
+# Router settings for load balancing (even with single model)
+router_settings:
+  routing_strategy: simple-shuffle
+  model_group_alias:
+    claude-coder: claude-coder-fake
+    qwen-coder: claude-coder-fake
+
+# Litellm settings
+litellm_settings:
+  # Disable cloud features
+  telemetry: false
+
+  # Local model optimizations
+  drop_params: true  # Drop unsupported params
+
+  # Retry logic
+  num_retries: 2
+  retry_after: 5
+
+  # Success callbacks (optional - for monitoring)
+  success_callback: []
+  failure_callback: []
