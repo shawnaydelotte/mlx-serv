@@ -30,6 +30,10 @@ echo "→ Upgrading pip and installing mlx-lm + litellm..."
 pip install --upgrade pip setuptools wheel
 pip install mlx-lm litellm
 
+# Step 3.5: Install MCP server dependencies
+echo "→ Installing MCP server dependencies..."
+pip install -r mcp-servers/requirements.txt
+
 # Step 4: Download and quantize model (Qwen2.5-Coder-7B to 4-bit) in current directory
 echo "→ Downloading and quantizing Qwen2.5-Coder-7B model..."
 mlx_lm.convert --hf-path Qwen/Qwen2.5-Coder-7B-Instruct --mlx-path ./qwen-coder-7b-4bit --q-bits 4
