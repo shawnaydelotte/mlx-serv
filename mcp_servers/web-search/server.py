@@ -3,6 +3,7 @@
 import asyncio
 from pathlib import Path
 import sys
+import time
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -21,9 +22,22 @@ class WebSearchServer(BaseMCPServer):
         # Rate limiting
         self.last_search_time = 0
         self.min_interval = 6  # seconds (10 requests/minute max)
+        self._rate_limit_lock = asyncio.Lock()
 
         # Register search tool
         self.register_search_tool()
+
+    def _perform_search(self, query: str, max_results: int) -> list[dict]:
+        """Perform synchronous DuckDuckGo search."""
+        with DDGS() as ddgs:
+            results = []
+            for result in ddgs.text(query, max_results=max_results):
+                results.append({
+                    "title": result.get("title", ""),
+                    "url": result.get("href", ""),
+                    "snippet": result.get("body", "")
+                })
+            return results
 
     def register_search_tool(self):
         """Register the search tool with MCP."""
@@ -39,16 +53,16 @@ class WebSearchServer(BaseMCPServer):
             Returns:
                 List of dicts with title, url, snippet
             """
-            # Rate limiting
-            import time
-            now = time.time()
-            elapsed = now - self.last_search_time
-            if elapsed < self.min_interval:
-                wait_time = self.min_interval - elapsed
-                self.logger.info(f"Rate limiting: waiting {wait_time:.1f}s")
-                await asyncio.sleep(wait_time)
+            # Rate limiting with lock
+            async with self._rate_limit_lock:
+                now = time.time()
+                elapsed = now - self.last_search_time
+                if elapsed < self.min_interval:
+                    wait_time = self.min_interval - elapsed
+                    self.logger.info(f"Rate limiting: waiting {wait_time:.1f}s")
+                    await asyncio.sleep(wait_time)
 
-            self.last_search_time = time.time()
+                self.last_search_time = time.time()
 
             # Limit max_results
             max_results = min(max_results, 10)
@@ -56,17 +70,9 @@ class WebSearchServer(BaseMCPServer):
             self.logger.info(f"Searching: {query} (max_results={max_results})")
 
             try:
-                with DDGS() as ddgs:
-                    results = []
-                    for result in ddgs.text(query, max_results=max_results):
-                        results.append({
-                            "title": result.get("title", ""),
-                            "url": result.get("href", ""),
-                            "snippet": result.get("body", "")
-                        })
-
-                    self.logger.info(f"Found {len(results)} results")
-                    return results
+                results = await asyncio.to_thread(self._perform_search, query, max_results)
+                self.logger.info(f"Found {len(results)} results")
+                return results
 
             except Exception as e:
                 self.logger.error(f"Search failed: {e}")
