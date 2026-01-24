@@ -2,3 +2,6 @@
 mcp>=0.9.0
 httpx>=0.27.0
 aiofiles>=23.2.1
+
+# Web Search Server
+duckduckgo-search>=5.0.0
