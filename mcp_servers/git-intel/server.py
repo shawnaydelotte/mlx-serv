@@ -38,6 +38,9 @@ class GitIntelServer(BaseMCPServer):
         if not self.repo:
             return None
 
+        # Cap limit to prevent memory issues
+        limit = min(limit, 1000)
+
         graph = nx.Graph()
         commits = list(self.repo.iter_commits(max_count=limit))
 
@@ -124,6 +127,9 @@ class GitIntelServer(BaseMCPServer):
             if not self.repo:
                 raise Exception("Not a git repository")
 
+            # Validate limit
+            limit = max(1, min(limit, 50))  # Between 1 and 50
+
             # Build co-change graph if needed
             if not self.cochange_graph:
                 self.logger.info("Building co-change graph...")
@@ -159,12 +165,19 @@ class GitIntelServer(BaseMCPServer):
 
                 files_changed = []
                 if commit.parents:
-                    for diff in commit.parents[0].diff(commit):
+                    for file_path, file_stats in commit.stats.files.items():
+                        # Find the diff to get change_type
+                        change_type = "M"  # Default to modified
+                        for diff in commit.parents[0].diff(commit):
+                            if diff.a_path == file_path or diff.b_path == file_path:
+                                change_type = diff.change_type
+                                break
+
                         files_changed.append({
-                            "path": diff.a_path or diff.b_path,
-                            "change_type": diff.change_type,
-                            "insertions": diff.diff.count(b'\n+') if diff.diff else 0,
-                            "deletions": diff.diff.count(b'\n-') if diff.diff else 0
+                            "path": file_path,
+                            "change_type": change_type,
+                            "insertions": file_stats["insertions"],
+                            "deletions": file_stats["deletions"]
                         })
 
                 return {
