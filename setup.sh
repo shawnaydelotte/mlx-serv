@@ -28,7 +28,7 @@ source ./mlx-env/bin/activate
 # Step 3: Upgrade pip and install dependencies
 echo "→ Upgrading pip and installing mlx-lm + litellm..."
 pip install --upgrade pip setuptools wheel
-pip install mlx-lm litellm
+pip install mlx-lm 'litellm[proxy]' pytest anthropic
 
 # Step 3.5: Install MCP server dependencies
 echo "→ Installing MCP server dependencies..."
