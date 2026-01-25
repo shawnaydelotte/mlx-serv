@@ -62,8 +62,8 @@ model_list:
 
 # General settings
 general_settings:
-  # Disable authentication for local use
-  master_key: none
+  # Disable authentication for local use (remove master_key entirely)
+  # master_key: none  # Commented out to disable auth
 
   # Logging
   set_verbose: false

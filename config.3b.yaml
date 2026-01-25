@@ -61,7 +61,7 @@ model_list:
 
 # General settings
 general_settings:
-  master_key: none
+  # master_key: none  # Commented out to disable auth
   set_verbose: false
   json_logs: true
   num_workers: 1
