@@ -40,7 +40,7 @@ temp/
 # Environment files
 .env
 .env.local
-
+.mailmap
 # Ralph Loop state
 .ralph/
 
