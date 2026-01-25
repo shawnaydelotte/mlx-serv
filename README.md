@@ -484,6 +484,32 @@ This setup uses:
 - LiteLLM: MIT License
 - Qwen2.5-Coder: Apache 2.0 License
 
+## Documentation
+
+Complete documentation is available in the `docs/` directory:
+
+### Setup & Installation
+- [Complete Setup Guide](docs/setup/COMPLETE-SETUP.md) - Detailed installation instructions
+- [OpenCode Setup](docs/setup/OPENCODE-SETUP.md) - Configuring OpenCode to use local models
+- [Setup Complete Reference](docs/setup/SETUP-COMPLETE.md) - Post-installation checklist
+
+### User Guides
+- [Quick Start Guide](docs/guides/QUICKSTART.md) - Get up and running in 5 minutes
+- [Usage Guide](docs/USAGE-GUIDE.md) - Complete usage documentation
+- [Ralph Loop Guide](docs/RALPH-LOOP.md) - Autonomous iteration tutorial
+
+### Reference
+- [Architecture Overview](docs/reference/ARCHITECTURE.md) - System architecture and data flow
+- [Model Aliases](docs/reference/MODEL-ALIASES.md) - Available model configurations
+- [Project Status](docs/reference/STATUS.md) - Current capabilities and roadmap
+- [Improvements](docs/reference/IMPROVEMENTS.md) - Enhancement ideas
+- [File Inventory](docs/reference/FILES.txt) - Complete file listing
+
+### Implementation Details
+- [Ralph Loop Implementation](docs/RALPH-LOOP-IMPLEMENTATION.md) - Engine implementation summary
+- [Implementation Summary](docs/IMPLEMENTATION-SUMMARY.md) - Full system implementation
+- [Implementation Plans](docs/plans/) - Detailed development plans
+
 ## Resources
 
 - [MLX Documentation](https://ml-explore.github.io/mlx/)
