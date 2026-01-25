@@ -44,15 +44,6 @@ temp/
 # Ralph Loop state
 .ralph/
 
-# Exclude detailed documentation (only push README and ARCHITECTURE)
-docs/
-!docs/.gitkeep
-
-# Exclude temporary status files
-STATUS.md
-FILES.txt
-QUICKSTART.md
-
 # Test artifacts
 .pytest_cache/
 *.coverage
