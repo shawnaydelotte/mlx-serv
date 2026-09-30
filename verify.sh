@@ -61,11 +61,12 @@ fi
 
 # Run tests
 echo -n "Running tests... "
-if PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/ -q >/dev/null 2>&1; then
+REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+if PYTHONPATH="$REPO_ROOT" pytest tests/ -q >/dev/null 2>&1; then
     echo -e "${GREEN}✓${NC}"
 else
     echo -e "${RED}✗${NC}"
-    echo "Run: PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/ -v"
+    echo "Run: PYTHONPATH=$REPO_ROOT pytest tests/ -v"
     exit 1
 fi
 

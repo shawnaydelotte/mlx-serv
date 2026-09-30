@@ -72,7 +72,7 @@ This configures OpenCode at `~/.config/opencode/config.json` with:
 - Model: `claude-coder-fake`
 - Optimized parameters for code generation
 
-**See [OPENCODE-SETUP.md](OPENCODE-SETUP.md) for detailed integration guide.**
+**See [docs/setup/OPENCODE-SETUP.md](docs/setup/OPENCODE-SETUP.md) for detailed integration guide.**
 
 ## Commands
 
@@ -93,7 +93,7 @@ This configures OpenCode at `~/.config/opencode/config.json` with:
 # Testing & Verification
 ./test.sh                    # Run health checks
 ./verify.sh                  # Integration verification
-source mlx-env/bin/activate && PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/ -v
+source mlx-env/bin/activate && PYTHONPATH=. pytest tests/ -v
 
 # Ralph Loop
 ./ralph-loop.sh "task"       # Autonomous iteration
@@ -112,11 +112,21 @@ Once running, you have two endpoints:
 | MLX-LM Backend | http://localhost:8080/v1 | Direct model access (OpenAI-compatible) |
 | LiteLLM Proxy | http://localhost:4000 | Anthropic-compatible API |
 
-**For OpenCode**: Use `http://localhost:4000` with model `claude-coder-fake`
+**For OpenCode**: Use `http://localhost:4000` (or `/v1`) with model `claude-coder-fake` (7B / default). With `./start.sh --fast`, the primary alias is `claude-coder-fast` (3B).
 
 ## Configuration
 
-### Default Config (`config.yaml`)
+LiteLLM configs in the repo:
+
+| File | Used when | Primary model alias |
+|------|-----------|---------------------|
+| `config.optimized.yaml` | `./start.sh` (default) | `claude-coder-fake` → 7B |
+| `config.3b.yaml` | `./start.sh --fast` | `claude-coder-fast` → 3B |
+| `config.yaml` | setup.sh / manual | `claude-coder-fake` → 7B (conservative) |
+
+All three also expose Claude name aliases (`claude-haiku-4-5`, etc.) that route to the same local model.
+
+### Conservative Config (`config.yaml`)
 
 Basic configuration with conservative settings:
 ```yaml
@@ -130,15 +140,17 @@ Enhanced for code generation:
 ```yaml
 max_tokens: 8192      # Longer outputs
 temperature: 0.3      # More focused
-streaming: true       # Better UX
+stream: true          # Better UX
 timeout: 300          # 5 min for complex tasks
 ```
 
-To use optimized config:
+`./start.sh` already loads `config.optimized.yaml` by default (7B quality mode).
+`./start.sh --fast` loads `config.3b.yaml` (3B speed mode).
+
+To force the conservative `config.yaml` instead:
 ```bash
-# Replace config.yaml with optimized version
-cp config.optimized.yaml config.yaml
-./start.sh --restart
+# Edit start.sh CONFIG_FILE, or run litellm directly:
+# litellm --config config.yaml --port 4000
 ```
 
 ## Testing
@@ -251,16 +263,22 @@ cat litellm_proxy.log
 
 ```
 mlx-serv/
-├── setup.sh                   # Initial setup script
-├── start.sh                   # Enhanced startup script ⭐
-├── run.sh                     # Legacy startup script
-├── config.yaml                # LiteLLM configuration
-├── config.optimized.yaml      # Optimized config for code
-├── qwen-coder-7b-4bit/        # Downloaded model files
-├── mlx-env/                   # Python virtual environment
-├── mlx_server.log             # MLX-LM logs
-├── litellm_proxy.log          # LiteLLM logs
-└── .server_pids               # Process IDs (auto-generated)
+├── setup.sh                   # Initial setup (deps + models)
+├── start.sh                   # Start/stop/status/logs/restart
+├── configure-opencode.sh      # OpenCode config helper
+├── ralph-loop.sh              # Ralph Loop CLI entry point
+├── test.sh / verify.sh        # Health checks / integration verify
+├── benchmark.sh               # 3B vs 7B performance comparison
+├── config.yaml                # Conservative LiteLLM config
+├── config.optimized.yaml      # Default for ./start.sh (7B)
+├── config.3b.yaml             # Used by ./start.sh --fast (3B)
+├── ralph_loop/                # Autonomous iteration engine
+├── mcp_servers/               # Web-search + git-intel MCP servers
+├── tests/                     # Pytest suite (43 tests)
+├── docs/                      # Guides and reference
+├── qwen-coder-*-4bit/         # Downloaded models (gitignored)
+├── mlx-env/                   # Python venv (gitignored)
+└── .ralph/                    # Ralph Loop state (gitignored)
 ```
 
 ## Advanced Usage
@@ -341,22 +359,20 @@ alias start-mlx='cd /path/to/mlx-serv && ./start.sh'
 ### Setup
 
 1. Install OpenCode (or your preferred tool)
-2. Configure to use local endpoint:
+2. Configure OpenCode (writes `~/.config/opencode/config.json`):
 
-**Environment variables:**
+```bash
+./configure-opencode.sh --optimized   # recommended
+# or: ./configure-opencode.sh         # default max_tokens/temperature
+```
+
+That sets Anthropic `baseURL` to `http://localhost:4000/v1` and model
+`anthropic/claude-coder-fake` (maps to the local Qwen 7B via LiteLLM).
+
+**For other Anthropic-compatible clients**, point the base URL at the proxy:
 ```bash
 export ANTHROPIC_API_KEY="local"
 export ANTHROPIC_BASE_URL="http://localhost:4000"
-```
-
-**Or config file:**
-```json
-{
-  "apiProvider": "anthropic",
-  "apiBaseUrl": "http://localhost:4000",
-  "apiKey": "local",
-  "model": "claude-coder-fake"
-}
 ```
 
 ### Usage Tips
@@ -392,11 +408,13 @@ Ralph Loop enables autonomous iteration on coding tasks through Plan → Execute
 
 ### Features
 
-- **Automatic model selection:** 3B for simple tasks, 7B for complex
-- **State persistence:** Resume from checkpoints in `.ralph/` directory
-- **User control:** Approval checkpoints every 2 iterations
-- **Max iteration safety:** Prevents infinite loops (5 max iterations)
-- **Test Coverage:** 43/43 tests passing
+- **Automatic model selection:** keyword-based (3B for simple tasks, 7B for complex); override with `--model 3b|7b`
+- **State persistence:** saves iteration state under `.ralph/state.json` (and `current-plan.md`)
+- **CLI flags:** `--max-iterations N` (default 5), `--auto`, `--ralph-dir DIR`
+- **Test Coverage:** 43 unit/integration tests under `tests/`
+
+**Model alias note:** Ralph requests `claude-coder-fake` for 7B and `claude-coder-fast` for 3B.
+Start the matching server mode (`./start.sh` vs `./start.sh --fast`) so the alias exists in LiteLLM.
 
 ### Known Limitations
 
@@ -404,6 +422,7 @@ Ralph Loop currently operates in **simulation mode**:
 - Execute phase logs intent but doesn't modify files
 - No tool calling (can't run git, tests, or read files)
 - No codebase context analysis
+- `--auto` / approval checkpoints are accepted by the CLI but interactive approval is not implemented yet (loop continues)
 
 **Future:** Integration with OpenCode tool calling for real execution.
 

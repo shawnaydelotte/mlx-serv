@@ -15,7 +15,7 @@ End-to-end setup guide for running local coding models with OpenCode.
 ### Step 1: Install Everything
 
 ```bash
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./setup.sh
 ```
 
@@ -110,7 +110,7 @@ Launch OpenCode and start using the local model!
 ### Morning (Start of Day)
 
 ```bash
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./start.sh
 ```
 
@@ -161,8 +161,8 @@ Or leave it running for instant access tomorrow.
 # Configure OpenCode (default)
 ./configure-opencode.sh
 
-# Switch to optimized server config
-cp config.optimized.yaml config.yaml
+# Restart servers (optimized config is already the start.sh default)
+# ./start.sh already uses config.optimized.yaml by default
 ./start.sh --restart
 ```
 
@@ -191,7 +191,7 @@ curl http://localhost:4000/v1/models
 ### Server Files
 
 ```
-/Users/s/Projects/mlx-serv/
+
 ├── start.sh              # Main script
 ├── configure-opencode.sh # OpenCode setup
 ├── test.sh               # Verification
@@ -219,13 +219,13 @@ nano ~/.config/opencode/config.json
 ### Logs
 
 ```
-/Users/s/Projects/mlx-serv/mlx_server.log
-/Users/s/Projects/mlx-serv/litellm_proxy.log
+mlx_server.log
+litellm_proxy.log
 ```
 
 View logs:
 ```bash
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./start.sh --logs
 ```
 
@@ -237,7 +237,7 @@ For best results, match your server and OpenCode configs:
 
 **Server:**
 ```bash
-cp config.optimized.yaml config.yaml
+# ./start.sh already uses config.optimized.yaml by default
 ./start.sh --restart
 ```
 
@@ -342,8 +342,8 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 ## Documentation
 
 - **README.md** - Complete guide
-- **QUICKSTART.md** - One-page reference
-- **OPENCODE-SETUP.md** - Detailed OpenCode integration
+- **docs/guides/QUICKSTART.md** - One-page reference
+- **docs/setup/OPENCODE-SETUP.md** - Detailed OpenCode integration
 - **ARCHITECTURE.md** - System architecture
 - **IMPROVEMENTS.md** - What's been improved
 - **FILES.txt** - Repository contents

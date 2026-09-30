@@ -34,7 +34,7 @@ Your MLX-LM local server with OpenCode integration is now fully configured and t
 
 ```bash
 # Start servers
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./start.sh
 
 # Configure OpenCode (one-time)

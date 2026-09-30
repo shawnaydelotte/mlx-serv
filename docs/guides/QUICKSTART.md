@@ -49,7 +49,7 @@ Automatically configure OpenCode:
 
 This updates `~/.config/opencode/config.json` with correct settings.
 
-**See [OPENCODE-SETUP.md](OPENCODE-SETUP.md) for detailed guide.**
+**See [../setup/OPENCODE-SETUP.md](../setup/OPENCODE-SETUP.md) for detailed guide.**
 
 ## Test It Works
 
@@ -62,7 +62,7 @@ This updates `~/.config/opencode/config.json` with correct settings.
 
 # Run test suite
 source mlx-env/bin/activate
-PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/ -v
+PYTHONPATH=. pytest tests/ -v
 
 # Or manual test
 curl http://localhost:4000/health
@@ -87,19 +87,12 @@ curl http://localhost:4000/v1/models
 - Normal! Model loading takes 10-30 seconds on first request
 - Subsequent requests are faster
 
-## Optimization
+## Configuration notes
 
-Use optimized config for better code generation:
-```bash
-cp config.optimized.yaml config.yaml
-./start.sh --restart
-```
+`./start.sh` already uses `config.optimized.yaml` (7B: max_tokens 8192, temperature 0.3, stream true).
+`./start.sh --fast` uses `config.3b.yaml` (primary alias `claude-coder-fast`).
 
-Changes:
-- ↑ Max tokens: 4096 → 8192
-- ↓ Temperature: 0.7 → 0.3 (more focused)
-- ✓ Streaming enabled
-- ✓ Longer timeout for complex tasks
+Conservative settings live in `config.yaml` if you run LiteLLM manually.
 
 ## File Structure
 
@@ -120,7 +113,7 @@ mlx-serv/
 | `http://localhost:4000` | LiteLLM proxy (Anthropic format) |
 | `http://localhost:4000/health` | Health check |
 
-**For OpenCode**: Use port `4000` with model `claude-coder-fake`
+**For OpenCode**: Use port `4000` with model `claude-coder-fake` (7B default). Fast mode primary alias is `claude-coder-fast`.
 
 ## Performance Tips
 
@@ -151,4 +144,4 @@ cat README.md         # Full documentation
 
 ---
 
-**Need more help?** See [README.md](README.md) for detailed documentation.
+**Need more help?** See [../../README.md](../../README.md) for detailed documentation.

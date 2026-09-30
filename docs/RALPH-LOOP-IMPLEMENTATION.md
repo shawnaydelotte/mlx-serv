@@ -239,13 +239,13 @@ Every task followed strict Test-Driven Development:
 ```bash
 # Run all tests
 source mlx-env/bin/activate
-PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/ -v
+PYTHONPATH=. pytest tests/ -v
 
 # Run specific test file
-PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/test_loop.py -v
+PYTHONPATH=. pytest tests/test_loop.py -v
 
 # With coverage
-PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/ --cov=ralph_loop
+PYTHONPATH=. pytest tests/ --cov=ralph_loop
 ```
 
 ## Performance Characteristics

@@ -35,7 +35,7 @@ This configures OpenCode with optimized settings for code generation:
 ### Step 1: Start MLX-LM Server
 
 ```bash
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./start.sh
 ```
 
@@ -184,7 +184,7 @@ If you prefer to configure OpenCode manually:
 
 The OpenCode configuration should match your MLX-LM server config:
 
-### If using `config.yaml` (default)
+### If using `config.yaml` (conservative; not what `./start.sh` loads by default)
 
 Use: `./configure-opencode.sh` (default)
 
@@ -192,7 +192,7 @@ Both configurations will have:
 - Max tokens: 4096
 - Temperature: 0.7
 
-### If using `config.optimized.yaml`
+### If using `config.optimized.yaml` (what `./start.sh` loads by default)
 
 Use: `./configure-opencode.sh --optimized`
 
@@ -207,7 +207,7 @@ Both configurations will have:
 
 ```bash
 # 1. Update server config
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 cp config.optimized.yaml config.yaml
 
 # 2. Restart server
@@ -221,7 +221,7 @@ cp config.optimized.yaml config.yaml
 
 ```bash
 # 1. Restore server config
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 git checkout config.yaml
 # OR manually edit config.yaml to restore defaults
 
@@ -237,7 +237,7 @@ git checkout config.yaml
 ### Test 1: Server Health
 
 ```bash
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./test.sh
 ```
 
@@ -269,7 +269,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 
 **Check 1: Is the server running?**
 ```bash
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./start.sh --status
 ```
 
@@ -416,7 +416,7 @@ If you want to serve multiple models:
 
 ```bash
 # 1. Start the server
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./start.sh
 
 # 2. Verify it's working
@@ -429,7 +429,7 @@ cd /Users/s/Projects/mlx-serv
 
 ```bash
 # Optional: Stop the server to free memory
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./start.sh --stop
 ```
 
@@ -468,7 +468,7 @@ source ~/.zshrc  # or ~/.bashrc
 ### Watch logs in real-time
 
 ```bash
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./start.sh --logs
 ```
 
@@ -477,7 +477,7 @@ You'll see each request/response as OpenCode uses the model.
 ### Check server status anytime
 
 ```bash
-cd /Users/s/Projects/mlx-serv
+cd /path/to/mlx-serv
 ./start.sh --status
 ```
 

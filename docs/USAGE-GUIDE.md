@@ -67,7 +67,7 @@ This will:
 1. Run 3 tests with the 7B model
 2. Run 3 tests with the 3B model
 3. Calculate averages and speedup
-4. Generate `docs/PERFORMANCE.md` with results
+4. Generate `docs/PERFORMANCE.md` with results (created by the script; not committed)
 
 **Note:** Takes ~5-10 minutes to complete.
 
@@ -142,11 +142,9 @@ Ralph Loop provides autonomous iteration on coding tasks through Plan → Execut
 # Force 7B model (quality)
 ./ralph-loop.sh --model 7b "Refactor database queries for performance"
 
-# Resume from checkpoint
-./ralph-loop.sh --resume
-
-# Help
+# Help / options
 ./ralph-loop.sh --help
+# Flags: --model 3b|7b, --max-iterations N, --auto, --ralph-dir DIR
 ```
 
 ### When to Use Ralph Loop
@@ -165,37 +163,26 @@ Ralph Loop provides autonomous iteration on coding tasks through Plan → Execut
 
 ### Model Selection
 
-Ralph Loop automatically selects the best model based on task complexity:
+Ralph Loop selects via keywords in the task description (see `ralph_loop/model_selector.py`):
 
-**3B Model (Speed):**
-- Simple tasks (< 50 tokens in description)
-- Test generation
-- Documentation
-- Quick iterations
-- ~300-400 tok/s performance
+**3B Model (Speed)** — keywords like format, comment, test, typo, rename, documentation, docstring, lint  
+Approximate ~300-400 tok/s on M2 Max (run `./benchmark.sh` for your machine).
 
-**7B Model (Quality):**
-- Complex tasks (50+ tokens)
-- Architectural decisions
-- Bug debugging
-- Code optimization
-- ~170 tok/s performance
+**7B Model (Quality)** — keywords like refactor, architecture, debug, complex, optimize, design, algorithm, performance, security  
+Approximate ~150-200 tok/s on M2 Max. Default when no keyword matches.
 
-**Override:** Use `--model 3b` or `--model 7b` to force a specific model.
+**Override:** `--model 3b` or `--model 7b`.  
+Ralph calls LiteLLM as `claude-coder-fast` (3B) or `claude-coder-fake` (7B) — start the matching `./start.sh` / `./start.sh --fast` mode.
 
 ### State Management
 
-Ralph Loop saves state to `.ralph/` directory:
+Ralph Loop saves state under `.ralph/` in the current working directory:
 
-**Files:**
-- `state.json` - Current iteration state
-- `plan.json` - Generated implementation plan
-- `execution.json` - Execution results
-- `review.json` - Review outcomes
+**Files written by the engine:**
+- `state.json` — iteration counter, phase, and accumulated results
+- `current-plan.md` — latest generated plan (from Plan phase)
 
-**Resume:** If interrupted, run `./ralph-loop.sh --resume` to continue from last checkpoint.
-
-**Clean Start:** Delete `.ralph/` directory to start fresh.
+**Resume:** There is no `--resume` flag. Re-run the same task; state in `.ralph/state.json` is loaded and iteration counting continues until max iterations. Delete `.ralph/` for a clean start.
 
 ### Iteration Flow
 
@@ -204,8 +191,8 @@ Ralph Loop saves state to `.ralph/` directory:
 3. **Review Phase:** Validates results against success criteria
 4. **Refine Phase:** If not complete, refines plan and iterates
 
-**Max Iterations:** 5 (prevents infinite loops)
-**User Approval:** Every 2 iterations
+**Max Iterations:** 5 by default (`--max-iterations`)  
+**User Approval:** `--auto` is accepted, but interactive approval checkpoints are not implemented yet (the loop continues automatically).
 
 ### Known Limitations
 
@@ -409,22 +396,22 @@ See existing servers for examples.
 ## File Locations
 
 **Configuration:**
-- `/Users/s/Projects/mlx-serv/config.optimized.yaml` - 7B config
-- `/Users/s/Projects/mlx-serv/config.3b.yaml` - 3B config
+- `config.optimized.yaml` - 7B config
+- `config.3b.yaml` - 3B config
 - `~/.config/opencode/config.json` - OpenCode config
 
 **Logs:**
-- `/Users/s/Projects/mlx-serv/mlx_server.log` - MLX-LM server
-- `/Users/s/Projects/mlx-serv/litellm_proxy.log` - LiteLLM proxy
+- `mlx_server.log` - MLX-LM server
+- `litellm_proxy.log` - LiteLLM proxy
 - `~/.ralph/mcp-web-search.log` - Web search MCP
 - `~/.ralph/mcp-git-intel.log` - Git intelligence MCP
 
 **Models:**
-- `/Users/s/Projects/mlx-serv/qwen-coder-7b-4bit/` - 7B model (~4-5GB)
-- `/Users/s/Projects/mlx-serv/qwen-coder-3b-4bit/` - 3B model (~3.2GB)
+- `qwen-coder-7b-4bit/` - 7B model (~4-5GB)
+- `qwen-coder-3b-4bit/` - 3B model (~3.2GB)
 
 **Process Tracking:**
-- `/Users/s/Projects/mlx-serv/.server_pids` - Running server PIDs
+- `.server_pids` - Running server PIDs
 
 ## Getting Help
 
@@ -436,10 +423,10 @@ See existing servers for examples.
 cat README.md
 
 # Quick reference
-cat QUICKSTART.md
+cat docs/guides/QUICKSTART.md
 
 # OpenCode integration
-cat OPENCODE-SETUP.md
+cat docs/setup/OPENCODE-SETUP.md
 
 # Performance benchmarks
 cat docs/PERFORMANCE.md

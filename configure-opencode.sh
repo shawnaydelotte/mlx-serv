@@ -162,7 +162,7 @@ echo -e "  Streaming:  ${DIM}Enabled${RESET}"
 
 echo -e "\n${BOLD}Next Steps:${RESET}"
 echo -e "  ${BLUE}1.${RESET} Start the MLX-LM server:"
-echo -e "     ${DIM}cd /Users/s/Projects/mlx-serv && ./start.sh${RESET}"
+echo -e "     ${DIM}./start.sh${RESET}"
 echo -e ""
 echo -e "  ${BLUE}2.${RESET} Verify server is running:"
 echo -e "     ${DIM}./start.sh --status${RESET}"

@@ -83,7 +83,7 @@ Based on review results:
 Options:
   --model 3b|7b           Force model selection (default: auto)
   --max-iterations N      Max iteration limit (default: 5)
-  --auto                  Skip approval checkpoints
+  --auto                  Skip approval checkpoints (flag accepted; interactive prompts not implemented yet)
   --ralph-dir DIR         State directory (default: .ralph/)
 ```
 
@@ -107,10 +107,10 @@ Ralph Loop automatically selects the best model for your task:
 
 **Manual Override:**
 ```bash
-# Force 3B for speed
+# Force 3B for speed (requires ./start.sh --fast so alias claude-coder-fast exists)
 ./ralph-loop.sh --model 3b "refactor authentication"
 
-# Force 7B for quality
+# Force 7B for quality (requires default ./start.sh so alias claude-coder-fake exists)
 ./ralph-loop.sh --model 7b "add unit tests"
 ```
 
@@ -145,12 +145,8 @@ rm -rf .ralph/
 ./ralph-loop.sh "Fix the timeout issue in API client"
 ```
 
-Ralph Loop will:
-1. Read the API client code
-2. Identify the timeout configuration
-3. Write a test that reproduces the issue
-4. Fix the timeout handling
-5. Verify tests pass
+In simulation mode Ralph Loop will Plan → (log) Execute → Review without modifying files.
+With real tool integration (future), the intended flow is: inspect code, reproduce, fix, verify.
 
 ### Example 2: Refactoring
 

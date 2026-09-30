@@ -1,7 +1,7 @@
 # MLX-Serv Project Status
 
 **Last Updated:** 2026-01-24
-**Version:** 1.0.0
+**Version:** 1.0.0 (project status doc); `ralph_loop.__version__` is `0.1.0`
 **Status:** ✅ Production Ready (with documented limitations)
 
 ## What Works
@@ -15,7 +15,7 @@
 ### ✅ Ralph Loop Engine
 - **Autonomous Iteration:** Plan → Execute → Review → Refine cycles
 - **Model Selection:** Auto-selects 3B vs 7B based on task complexity
-- **State Persistence:** Resume from checkpoints in `.ralph/`
+- **State Persistence:** Iteration state in `.ralph/state.json` (re-run continues counting; no `--resume` flag)
 - **CLI Interface:** `./ralph-loop.sh "task description"`
 - **Test Coverage:** 43/43 tests passing
 
@@ -91,7 +91,7 @@
 
 # Run tests
 source mlx-env/bin/activate
-PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/ -v
+PYTHONPATH=. pytest tests/ -v
 ```
 
 ## Project Structure
@@ -100,7 +100,7 @@ PYTHONPATH=/Users/s/Projects/mlx-serv pytest tests/ -v
 mlx-serv/
 ├── ralph_loop/          # Ralph Loop engine (759 LOC)
 ├── mcp_servers/         # MCP infrastructure + servers
-├── tests/               # Test suite (809 LOC, 43 tests)
+├── tests/               # Test suite (43 pytest functions)
 ├── docs/                # Documentation (1200+ LOC)
 ├── *.sh                 # Scripts (setup, start, ralph-loop, verify, test)
 └── config*.yaml         # LiteLLM configurations

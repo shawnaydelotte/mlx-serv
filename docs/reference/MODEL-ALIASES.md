@@ -10,14 +10,15 @@ All of these model names work and route to the same local model:
 
 | Model Name | Purpose |
 |------------|---------|
-| `claude-coder-fake` | Original/primary name |
-| `claude-haiku-4-5` | Latest Haiku alias |
+| `claude-coder-fake` | Primary name in `config.yaml` / `config.optimized.yaml` (7B; default `./start.sh`) |
+| `claude-coder-fast` | Primary name in `config.3b.yaml` (3B; `./start.sh --fast`) |
+| `claude-haiku-4-5` | Haiku alias (same backend as the active config) |
 | `claude-3-5-sonnet-20241022` | Sonnet 3.5 alias |
 | `claude-3-5-haiku-20241022` | Haiku 3.5 alias |
 
 ## How It Works
 
-The `config.yaml` and `config.optimized.yaml` files now include multiple model entries that all point to the same backend:
+`./start.sh` loads `config.optimized.yaml` by default; `--fast` loads `config.3b.yaml`. Those files (and `config.yaml`) include multiple model entries that all point to the active local backend:
 
 ```yaml
 model_list:
@@ -105,4 +106,4 @@ With aliases, they all work without reconfiguration!
 
 ## Performance Note
 
-All aliases use the same backend model, so performance is identical regardless of which name you use. The name is just for compatibility with different tools.
+Within a given config file, all aliases use the same backend weights. Switching between 7B and 3B requires restarting with the matching config (`./start.sh` vs `./start.sh --fast`).
